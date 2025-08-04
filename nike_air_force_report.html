@@ -1,0 +1,848 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nike Air Force Products - Price Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+        }
+        .stats {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        .product-number {
+            background: #667eea;
+            color: white;
+            padding: 8px 12px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+        .product-info {
+            padding: 15px;
+        }
+        .product-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+            line-height: 1.3;
+        }
+        .price-info {
+            margin-bottom: 10px;
+        }
+        .current-price {
+            font-size: 18px;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .old-price {
+            font-size: 14px;
+            color: #7f8c8d;
+            text-decoration: line-through;
+            margin-left: 10px;
+        }
+        .discount {
+            background-color: #e74c3c;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .final-price {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .status {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .available {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .unavailable {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .additional-discount-badge {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 5px;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .product-link {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        .product-link:hover {
+            background-color: #2980b9;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        .changes-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+        .changes-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .change-item {
+            padding: 10px 15px;
+            margin: 8px 0;
+            border-radius: 6px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .change-text {
+            flex: 1;
+        }
+        .change-image {
+            margin-left: 10px;
+            flex-shrink: 0;
+        }
+        .change-new {
+            background: linear-gradient(45deg, #e8f5e8, #d4edda);
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+        .change-price {
+            background: linear-gradient(45deg, #fff3cd, #ffeaa7);
+            border-left: 4px solid #ffc107;
+            color: #856404;
+        }
+        .change-availability {
+            background: linear-gradient(45deg, #d1ecf1, #bee5eb);
+            border-left: 4px solid #17a2b8;
+            color: #0c5460;
+        }
+        .change-removed {
+            background: linear-gradient(45deg, #f8d7da, #f5c6cb);
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        .no-changes {
+            background: linear-gradient(45deg, #e2e3e5, #d6d8db);
+            border-left: 4px solid #6c757d;
+            color: #495057;
+            text-align: center;
+            padding: 20px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏀 Nike Air Force Products</h1>
+        <p>Complete price report sorted by price (lowest to highest)</p>
+        <p>Generated on August 04, 2025 at 07:20 PM</p>
+    </div>
+    
+    <div class="stats">
+        <h3>📊 Report Statistics</h3>
+        <p><strong>47</strong> products found</p>
+        <p>Price range: <strong>107,50 BAM</strong> - <strong>279,00 BAM</strong></p>
+        <p>All products are currently available ✅</p>
+    </div>
+    
+    <div class="changes-section">
+        <h3 class="changes-title">🔄 Changes Since Last Run</h3><div class="no-changes">✅ No changes detected since last run</div>
+    </div>
+    
+    <div class="product-grid">
+
+        <div class="product-card">
+            <div class="product-number">#1</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/FB1/FB1362-102/images/thumbs_350/FB1362-102_350_350px.jpg.webp" alt="Nike Patike Full Force" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Full Force</div>
+                <div class="price-info"><span class="current-price">107,50 BAM</span><span class="old-price">215,00 BAM</span><span class="discount">-50%</span></div>
+                <div class="final-price">Final Price: <strong>96.75 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/306536-nike-patike-full-force" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#2</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/FB1/FB1362-001/images/thumbs_350/FB1362-001_350_350px.jpg.webp" alt="Nike Patike Full Force Low" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Full Force Low</div>
+                <div class="price-info"><span class="current-price">107,50 BAM</span><span class="old-price">215,00 BAM</span><span class="discount">-50%</span></div>
+                <div class="final-price">Final Price: <strong>96.75 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/308446-nike-patike-full-force-low" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#3</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/FB1/FB1362-101/images/thumbs_350/FB1362-101_350_350px.jpg.webp" alt="Nike Patike Full Force Low" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Full Force Low</div>
+                <div class="price-info"><span class="current-price">129,00 BAM</span><span class="old-price">215,00 BAM</span><span class="discount">-40%</span></div>
+                <div class="final-price">Final Price: <strong>116.10 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/306531-nike-patike-full-force-low" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#4</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HJ7/HJ7262-100/images/thumbs_350/HJ7262-100_350_350px.jpg.webp" alt="Nike Patike NIKE FULL FORCE LO OPP1" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike NIKE FULL FORCE LO OPP1</div>
+                <div class="price-info"><span class="current-price">129,00 BAM</span><span class="old-price">215,00 BAM</span><span class="discount">-40%</span></div>
+                <div class="final-price">Final Price: <strong>116.10 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/327495-nike-patike-nike-full-force-lo-opp1" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#5</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/FQ8/FQ8183-100/images/thumbs_350/FQ8183-100_350_350px.jpg.webp" alt="Nike Patike Air Alpha Force 88" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Alpha Force 88</div>
+                <div class="price-info"><span class="current-price">139,50 BAM</span><span class="old-price">279,00 BAM</span><span class="discount">-50%</span></div>
+                <div class="final-price">Final Price: <strong>125.55 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/317611-nike-patike-air-alpha-force-88" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#6</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HM0/HM0721-002/images/thumbs_350/HM0721-002_350_350px.jpg.webp" alt="Nike Patike NIKE AIR FORCE 1 '07 NN BBALL" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike NIKE AIR FORCE 1 '07 NN BBALL</div>
+                <div class="price-info"><span class="current-price">167,40 BAM</span><span class="old-price">279,00 BAM</span><span class="discount">-40%</span></div>
+                <div class="final-price">Final Price: <strong>150.66 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/334690-nike-patike-nike-air-force-1-07-nn-bball" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#7</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/FJ4/FJ4146-106/images/thumbs_350/FJ4146-106_350_350px.jpg.webp" alt="Nike Patike Air Force 1 '07" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Force 1 '07</div>
+                <div class="price-info"><span class="current-price">181,30 BAM</span><span class="old-price">259,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>163.17 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/321983-nike-patike-air-force-1-07" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#8</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HQ4/HQ4987-010/images/thumbs_350/HQ4987-010_350_350px.jpg.webp" alt="Nike Patike Air Force 1 '07 Lv8" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Force 1 '07 Lv8</div>
+                <div class="price-info"><span class="current-price">181,30 BAM</span><span class="old-price">259,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>163.17 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/337528-nike-patike-air-force-1-07-lv8" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#9</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/FZ0/FZ0627-010/images/thumbs_350/FZ0627-010_350_350px.jpg.webp" alt="Nike Patike Air Force 1 '07" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Force 1 '07</div>
+                <div class="price-info"><span class="current-price">181,30 BAM</span><span class="old-price">259,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>163.17 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/318936-nike-patike-air-force-1-07" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#10</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/FJ4/FJ4146-102/images/thumbs_350/FJ4146-102_350_350px.jpg.webp" alt="Nike Patike Air Force 1 '07" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Force 1 '07</div>
+                <div class="price-info"><span class="current-price">181,30 BAM</span><span class="old-price">259,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>163.17 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/312798-nike-patike-air-force-1-07" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#11</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HV1/HV1204-300/images/thumbs_350/HV1204-300_350_350px.jpg.webp" alt="Nike Patike AIR FORCE 1 LOW CANVAS" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike AIR FORCE 1 LOW CANVAS</div>
+                <div class="price-info"><span class="current-price">181,30 BAM</span><span class="old-price">259,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>163.17 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/355356-nike-patike-air-force-1-low-canvas" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#12</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HJ9/HJ9094-012/images/thumbs_350/HJ9094-012_350_350px.jpg.webp" alt="Nike Patike AIR FORCE 1 '07 LV8" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike AIR FORCE 1 '07 LV8</div>
+                <div class="price-info"><span class="current-price">181,30 BAM</span><span class="old-price">259,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>163.17 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/334650-nike-patike-air-force-1-07-lv8" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#13</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HM9/HM9483-100/images/thumbs_350/HM9483-100_350_350px.jpg.webp" alt="Nike Patike AIR FORCE 1 ’07 LV8 ESS+" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike AIR FORCE 1 ’07 LV8 ESS+</div>
+                <div class="price-info"><span class="current-price">181,30 BAM</span><span class="old-price">259,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>163.17 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/355968-nike-patike-air-force-1-07-lv8-ess" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#14</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HJ4/HJ4465-001/images/thumbs_350/HJ4465-001_350_350px.jpg.webp" alt="Nike Patike AIR FORCE 1 '07 LV8 TREND" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike AIR FORCE 1 '07 LV8 TREND</div>
+                <div class="price-info"><span class="current-price">181,30 BAM</span><span class="old-price">259,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>163.17 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/349743-nike-patike-air-force-1-07-lv8-trend" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#15</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HJ4/HJ4465-700/images/thumbs_350/HJ4465-700_350_350px.jpg.webp" alt="Nike Patike AIR FORCE 1 '07 LV8 TREND" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike AIR FORCE 1 '07 LV8 TREND</div>
+                <div class="price-info"><span class="current-price">181,30 BAM</span><span class="old-price">259,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>163.17 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/349603-nike-patike-air-force-1-07-lv8-trend" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#16</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/CD7/CD7069-110/images/thumbs_350/CD7069-110_350_350px.jpg.webp" alt="Nike Patike Air Jordan Legacy 312 Low" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Jordan Legacy 312 Low</div>
+                <div class="price-info"><span class="current-price">185,40 BAM</span><span class="old-price">309,00 BAM</span><span class="discount">-40%</span></div>
+                <div class="final-price">Final Price: <strong>166.86 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/315061-nike-patike-air-jordan-legacy-312-low" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#17</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HF3/HF3839-001/images/thumbs_350/HF3839-001_350_350px.jpg.webp" alt="Nike Patike NIKE AIR FORCE 1 07 FLB" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike NIKE AIR FORCE 1 07 FLB</div>
+                <div class="price-info"><span class="current-price">195,30 BAM</span><span class="old-price">279,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>175.77 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/334550-nike-patike-nike-air-force-1-07-flb" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#18</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HM0/HM0721-001/images/thumbs_350/HM0721-001_350_350px.jpg.webp" alt="Nike Patike NIKE AIR FORCE 1 '07 NN BBALL" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike NIKE AIR FORCE 1 '07 NN BBALL</div>
+                <div class="price-info"><span class="current-price">195,30 BAM</span><span class="old-price">279,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>175.77 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/334685-nike-patike-nike-air-force-1-07-nn-bball" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#19</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/FQ8/FQ8714-001/images/thumbs_350/FQ8714-001_350_350px.jpg.webp" alt="Nike Patike Air Force 1 '07" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Force 1 '07</div>
+                <div class="price-info"><span class="current-price">195,30 BAM</span><span class="old-price">279,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>175.77 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/317041-nike-patike-air-force-1-07" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#20</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/IB6/IB6388-300/images/thumbs_350/IB6388-300_350_350px.jpg.webp" alt="Nike Patike Air Force 1 ’07 LV8" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Force 1 ’07 LV8</div>
+                <div class="price-info"><span class="current-price">195,30 BAM</span><span class="old-price">279,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>175.77 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/359993-nike-patike-air-force-1-07-lv8" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#21</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/FQ8/FQ8714-004/images/thumbs_350/FQ8714-004_350_350px.jpg.webp" alt="Nike Patike Air Force 1 '07" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Force 1 '07</div>
+                <div class="price-info"><span class="current-price">195,30 BAM</span><span class="old-price">279,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>175.77 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/339608-nike-patike-air-force-1-07" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#22</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/CW2/CW2289-001/images/thumbs_350/CW2289-001_350_350px.jpg.webp" alt="Nike Patike Air Force 1 '07" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Force 1 '07</div>
+                <div class="price-info"><span class="current-price">195,30 BAM</span><span class="old-price">279,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>175.77 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/353178-nike-patike-air-force-1-07" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#23</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/FQ4/FQ4296-101/images/thumbs_350/FQ4296-101_350_350px.jpg.webp" alt="Nike Patike Air Force 1 '07" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Force 1 '07</div>
+                <div class="price-info"><span class="current-price">207,20 BAM</span><span class="old-price">259,00 BAM</span><span class="discount">-20%</span></div>
+                <div class="final-price">Final Price: <strong>186.48 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/315146-nike-patike-air-force-1-07" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#24</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/CT2/CT2302-100/images/thumbs_350/CT2302-100_350_350px.jpg.webp" alt="Nike Patike Air Force 1 '07" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Force 1 '07</div>
+                <div class="price-info"><span class="current-price">207,20 BAM</span><span class="old-price">259,00 BAM</span><span class="discount">-20%</span></div>
+                <div class="final-price">Final Price: <strong>186.48 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/138632-nike-patike-air-force-1-07" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#25</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HQ2/HQ2037-100/images/thumbs_350/HQ2037-100_350_350px.jpg.webp" alt="Nike Patike AIR FORCE 1 '07 Lv8" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike AIR FORCE 1 '07 Lv8</div>
+                <div class="price-info"><span class="current-price">207,20 BAM</span><span class="old-price">259,00 BAM</span><span class="discount">-20%</span></div>
+                <div class="final-price">Final Price: <strong>186.48 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/359255-nike-patike-air-force-1-07-lv8" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#26</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/FJ4/FJ4146-116/images/thumbs_350/FJ4146-116_350_350px.jpg.webp" alt="Nike Patike Air Force 1 '07" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Force 1 '07</div>
+                <div class="price-info"><span class="current-price">207,20 BAM</span><span class="old-price">259,00 BAM</span><span class="discount">-20%</span></div>
+                <div class="final-price">Final Price: <strong>186.48 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/357319-nike-patike-air-force-1-07" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#27</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/AV3/AV3042-001/images/thumbs_350/AV3042-001_350_350px.jpg.webp" alt="Nike Patike Air Force 1 Fly Knit" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Force 1 Fly Knit</div>
+                <div class="price-info"><span class="current-price">207,20 BAM</span><span class="old-price">259,00 BAM</span><span class="discount">-20%</span></div>
+                <div class="final-price">Final Price: <strong>186.48 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/66451-nike-patike-air-force-1-fly-knit" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#28</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HJ4/HJ4465-200/images/thumbs_350/HJ4465-200_350_350px.jpg.webp" alt="Nike Patike AIR FORCE 1 '07 LV8 TREND" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike AIR FORCE 1 '07 LV8 TREND</div>
+                <div class="price-info"><span class="current-price">207,20 BAM</span><span class="old-price">259,00 BAM</span><span class="discount">-20%</span></div>
+                <div class="final-price">Final Price: <strong>186.48 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/349633-nike-patike-air-force-1-07-lv8-trend" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#29</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/CD7/CD7069-164/images/thumbs_350/CD7069-164_350_350px.jpg.webp" alt="Nike Patike Air Jordan Legacy 312 Low" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Jordan Legacy 312 Low</div>
+                <div class="price-info"><span class="current-price">216,30 BAM</span><span class="old-price">309,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>194.67 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/318206-nike-patike-air-jordan-legacy-312-low" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#30</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/CD7/CD7069-131/images/thumbs_350/CD7069-131_350_350px.jpg.webp" alt="Nike Patike Air Jordan Legacy 312 Low" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Jordan Legacy 312 Low</div>
+                <div class="price-info"><span class="current-price">216,30 BAM</span><span class="old-price">309,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>194.67 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/318201-nike-patike-air-jordan-legacy-312-low" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#31</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/CD7/CD7069-120/images/thumbs_350/CD7069-120_350_350px.jpg.webp" alt="Nike Patike AIR JORDAN LEGACY 312" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike AIR JORDAN LEGACY 312</div>
+                <div class="price-info"><span class="current-price">216,30 BAM</span><span class="old-price">309,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>194.67 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/339673-nike-patike-air-jordan-legacy-312" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#32</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/CD7/CD7069-114/images/thumbs_350/CD7069-114_350_350px.jpg.webp" alt="Nike Patike AIR JORDAN LEGACY 312" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike AIR JORDAN LEGACY 312</div>
+                <div class="price-info"><span class="current-price">216,30 BAM</span><span class="old-price">309,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>194.67 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/337503-nike-patike-air-jordan-legacy-312" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#33</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HV6/HV6418-100/images/thumbs_350/HV6418-100_350_350px.jpg.webp" alt="Nike Patike NIKE AIR FORCE 1 '07" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike NIKE AIR FORCE 1 '07</div>
+                <div class="price-info"><span class="current-price">223,20 BAM</span><span class="old-price">279,00 BAM</span><span class="discount">-20%</span></div>
+                <div class="final-price">Final Price: <strong>200.88 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/345376-nike-patike-nike-air-force-1-07" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#34</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/FQ8/FQ8714-200/images/thumbs_350/FQ8714-200_350_350px.jpg.webp" alt="Nike Patike Air Force 1 '07" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Force 1 '07</div>
+                <div class="price-info"><span class="current-price">223,20 BAM</span><span class="old-price">279,00 BAM</span><span class="discount">-20%</span></div>
+                <div class="final-price">Final Price: <strong>200.88 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/359360-nike-patike-air-force-1-07" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#35</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/CT3/CT3438-002/images/thumbs_350/CT3438-002_350_350px.jpg.webp" alt="Nike Patike AIR FORCE 1 JEWEL" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike AIR FORCE 1 JEWEL</div>
+                <div class="price-info"><span class="current-price">223,20 BAM</span><span class="old-price">279,00 BAM</span><span class="discount">-20%</span></div>
+                <div class="final-price">Final Price: <strong>200.88 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/332750-nike-patike-air-force-1-jewel" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#36</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HV5/HV5752-410/images/thumbs_350/HV5752-410_350_350px.jpg.webp" alt="Nike Patike AIR FORCE 1 '07 LV8 NA1" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike AIR FORCE 1 '07 LV8 NA1</div>
+                <div class="price-info"><span class="current-price">223,20 BAM</span><span class="old-price">279,00 BAM</span><span class="discount">-20%</span></div>
+                <div class="final-price">Final Price: <strong>200.88 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/358156-nike-patike-air-force-1-07-lv8-na1" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#37</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HF4/HF4864-094/images/thumbs_350/HF4864-094_350_350px.jpg.webp" alt="Nike Patike AIR FORCE 1 '07 PRM WP" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike AIR FORCE 1 '07 PRM WP</div>
+                <div class="price-info"><span class="current-price">223,20 BAM</span><span class="old-price">279,00 BAM</span><span class="discount">-20%</span></div>
+                <div class="final-price">Final Price: <strong>200.88 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/334595-nike-patike-air-force-1-07-prm-wp" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#38</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HV3/HV3959-010/images/thumbs_350/HV3959-010_350_350px.jpg.webp" alt="Nike Patike Air Force 1" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Force 1</div>
+                <div class="price-info"><span class="current-price">227,50 BAM</span><span class="old-price">325,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>204.75 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/337603-nike-patike-air-force-1" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#39</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/CW2/CW2288-111/images/thumbs_350/CW2288-111_350_350px.jpg.webp" alt="Nike Patike Air Force 1 '07" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Force 1 '07</div>
+                <div class="price-info"><span class="current-price">259,00 BAM</span></div>
+                
+                
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/159632-nike-patike-air-force-1-07" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#40</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/CT2/CT2302-002/images/thumbs_350/CT2302-002_350_350px.jpg.webp" alt="Nike Patike Air Force 1 '07" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Force 1 '07</div>
+                <div class="price-info"><span class="current-price">259,00 BAM</span></div>
+                
+                
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/138627-nike-patike-air-force-1-07" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#41</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/IB6/IB6388-003/images/thumbs_350/IB6388-003_350_350px.jpg.webp" alt="Nike Patike Air Force 1 ’07 LV8" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Air Force 1 ’07 LV8</div>
+                <div class="price-info"><span class="current-price">259,00 BAM</span></div>
+                
+                
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/363911-nike-patike-air-force-1-07-lv8" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#42</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HQ2/HQ2037-004/images/thumbs_350/HQ2037-004_350_350px.jpg.webp" alt="Nike Patike AIR FORCE 1 '07 Lv8" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike AIR FORCE 1 '07 Lv8</div>
+                <div class="price-info"><span class="current-price">259,00 BAM</span></div>
+                
+                
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/361586-nike-patike-air-force-1-07-lv8" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#43</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HQ2/HQ2037-101/images/thumbs_350/HQ2037-101_350_350px.jpg.webp" alt="Nike Patike AIR FORCE 1 '07 Lv8" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike AIR FORCE 1 '07 Lv8</div>
+                <div class="price-info"><span class="current-price">259,00 BAM</span></div>
+                
+                
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/363926-nike-patike-air-force-1-07-lv8" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#44</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/HQ1/HQ1966-200/images/thumbs_350/HQ1966-200_350_350px.jpg.webp" alt="Nike Patike AIR FORCE 1 '07 LV8" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike AIR FORCE 1 '07 LV8</div>
+                <div class="price-info"><span class="current-price">259,00 BAM</span></div>
+                
+                
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/365532-nike-patike-air-force-1-07-lv8" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#45</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/805/805899-202/images/thumbs_350/805899-202_350_350px.jpg.webp" alt="Nike Patike Lunar Force 1 Duckboot" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Lunar Force 1 Duckboot</div>
+                <div class="price-info"><span class="current-price">272,30 BAM</span><span class="old-price">389,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>245.07 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/267294-nike-patike-lunar-force-1-duckboot" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#46</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/DZ5/DZ5320-201/images/thumbs_350/DZ5320-201_350_350px.jpg.webp" alt="Nike Patike Lunar Force 1 Duckboot" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike Lunar Force 1 Duckboot</div>
+                <div class="price-info"><span class="current-price">272,30 BAM</span><span class="old-price">389,00 BAM</span><span class="discount">-30%</span></div>
+                <div class="final-price">Final Price: <strong>245.07 BAM</strong> (after 10% discount)</div>
+                <div class="additional-discount-badge">🔥 DODATNIH 10%</div>
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/341606-nike-patike-lunar-force-1-duckboot" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+        <div class="product-card">
+            <div class="product-number">#47</div>
+            <img src="https://www.buzzsneakers.ba/files/thumbs/files/images/slike-proizvoda/media/II7/II7630-100/images/thumbs_350/II7630-100_350_350px.jpg.webp" alt="Nike Patike AIR FORCE 1 '07 LV8" class="product-image" loading="lazy">
+            <div class="product-info">
+                <div class="product-name">Nike Patike AIR FORCE 1 '07 LV8</div>
+                <div class="price-info"><span class="current-price">279,00 BAM</span></div>
+                
+                
+                <div class="status available">✅ Available</div>
+                <a href="https://www.buzzsneakers.ba/patike/365005-nike-patike-air-force-1-07-lv8" target="_blank" class="product-link">View Product</a>
+            </div>
+        </div>
+
+    </div>
+    
+    <div class="footer">
+        <p>Data scraped from buzzsneakers.ba</p>
+        <p>This report is automatically generated and updated when prices change</p>
+    </div>
+</body>
+</html>
